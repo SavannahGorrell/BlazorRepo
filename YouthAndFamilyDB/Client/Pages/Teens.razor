@@ -1,0 +1,80 @@
+﻿@page "/teens"
+@inject ITeenService TeenService
+@inject NavigationManager NavigationManager
+@implements IDisposable
+
+<h3>Teens</h3>
+
+@if(TeenService.Teens.Count == 0)
+ {
+     <span>Loading Teens...</span>
+ }
+ else
+ {
+    <table class="table">
+        <thead>
+            <tr>
+                <th>First Name</th>
+                <th>Last Name</th>
+                <th>Grade Level</th>
+                <th>House Church</th>
+                <th></th>
+                <th></th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var teen in TeenService.Teens)
+             {
+                <tr>
+                    <td>@teen.FirstName</td>
+                    <td>@teen.LastName</td>
+                    <td>@teen.GradeLevel</td>
+                    <td>@teen.HouseChurch.Name</td>
+                    <td>
+                        <button class="btn btn-primary" @onclick="(() => ShowTeen(teen.Id))">Show</button>
+                    </td>
+                    <td>
+                        <button class="btn btn-primary" @onclick="(() => EditTeen(teen.Id))">Edit</button>
+                    </td>
+                    <td>
+                        <button class="btn btn-primary" @onclick="(() => DeleteTeen(teen.Id))">Delete</button>
+                    </td>
+                </tr>
+             }
+        </tbody>
+    </table>
+ }
+
+<EditTeen Teen="teenToEdit"></EditTeen>
+
+@code {    
+    YouthAndFamilyDB.Shared.Teen teenToEdit = new YouthAndFamilyDB.Shared.Teen();
+
+    protected override async Task OnInitializedAsync()
+    {
+        await TeenService.GetTeens();
+        TeenService.OnChange += StateHasChanged;
+    }
+
+    void ShowTeen(int id)
+    {
+        NavigationManager.NavigateTo($"teen/{id}");
+    }
+
+    void EditTeen(int id)
+    {
+        teenToEdit = TeenService.Teens.Find(t => t.Id == id);
+    }
+
+    void DeleteTeen(int id)
+    {
+        TeenService.DeleteTeen(id);
+    }
+
+
+    public void Dispose()
+    {
+        TeenService.OnChange -= StateHasChanged;
+    }
+}

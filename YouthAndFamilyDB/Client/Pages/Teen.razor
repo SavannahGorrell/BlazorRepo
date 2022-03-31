@@ -1,0 +1,24 @@
+﻿@page "/teen/{id:int}"
+@inject ITeenService TeenService
+
+@if (teen == null)
+{
+    <span>Teen is loading...</span>
+}
+else
+{
+    <h3>This is @teen.FirstName @teen.LastName.</h3>
+    <span>This teen belongs to the @teen.HouseChurch.Name house church.</span>
+}
+
+@code {
+    [Parameter]
+    public int Id { get; set; }
+
+    YouthAndFamilyDB.Shared.Teen teen = null;
+
+    protected override async Task OnInitializedAsync()
+    {
+        teen = await TeenService.GetTeen(Id);
+    }
+}

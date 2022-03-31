@@ -1,0 +1,65 @@
+﻿@inject ITeenService TeenService
+@inject IJSRuntime JSRuntime
+
+@if (Teen.Id == 0)
+{
+    <h3>Create a new Teen</h3>
+}
+else
+{
+    <h3>Edit '@Teen.FirstName'</h3>
+}
+
+<EditForm Model="Teen" OnSubmit="HandleSubmit">
+    <div class="form-group">
+        <label>First Name</label>
+        <InputText @bind-Value="Teen.FirstName" class="form-control" placeholder="First Name"></InputText>
+    </div>
+    <div class="form-group">
+        <label>Last Name</label>
+        <InputText @bind-Value="Teen.LastName" class="form-control" placeholder="Last Name"></InputText>
+    </div>
+    <div class="form-group">
+        <label>Grade Level</label>
+        <InputNumber @bind-Value="Teen.GradeLevel" class="form-control"></InputNumber>
+    </div>
+    <div class="form-group">
+        <label>House Church</label><br />
+        <InputRadioGroup @bind-Value="houseChurchId" class="form-control">
+            @foreach (var houseChurch in TeenService.HouseChurches)
+            {
+                <InputRadio Value="@houseChurch.Id" /><span style="padding-left: 5px;">@houseChurch.Name</span><br />
+            }
+        </InputRadioGroup>
+    </div>
+    <button type="submit" class="btn btn-primary">Submit</button>
+</EditForm>
+
+@code {
+    [Parameter]
+    public YouthAndFamilyDB.Shared.Teen Teen { get; set; } = new YouthAndFamilyDB.Shared.Teen();
+    int houseChurchId = 1;
+
+    protected override async Task OnParametersSetAsync()
+    {
+        await TeenService.GetHouseChurches();
+
+        houseChurchId = Teen.HouseChurch.Id;
+    }
+
+    async void HandleSubmit()
+    {
+        Teen.HouseChurch = TeenService.HouseChurches.FirstOrDefault(h => h.Id == houseChurchId);
+
+        await JSRuntime.InvokeVoidAsync("console.log", Teen);
+
+        if (Teen.Id == 0)
+        {
+            await TeenService.CreateTeen(Teen);
+        }
+        else
+        {
+            await TeenService.UpdateTeen(Teen, Teen.Id);
+        }
+    }
+}
