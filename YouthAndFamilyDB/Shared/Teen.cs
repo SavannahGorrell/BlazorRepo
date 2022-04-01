@@ -12,7 +12,8 @@ namespace YouthAndFamilyDB.Shared
         public string FirstName { get; set; }
         public string LastName { get; set; }
         public int GradeLevel { get; set; }
-        public HouseChurch HouseChurch { get; set; } = new HouseChurch();
+        public HouseChurch HouseChurch { get; set; }
+        public int HouseChurchId { get; set; }
 
     }
 }
