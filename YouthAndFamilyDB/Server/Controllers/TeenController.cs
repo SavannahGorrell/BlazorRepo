@@ -12,34 +12,34 @@ namespace YouthAndFamilyDB.Server.Controllers
     [ApiController]
     public class TeenController : ControllerBase
     {
-        static List<HouseChurch> houseChurches = new List<HouseChurch>
+        static readonly List<HouseChurch> houseChurches = new()
         {
             new HouseChurch { Id = 1, Name = "Kinzer"},
             new HouseChurch { Id = 2, Name = "Ammon"},
             new HouseChurch { Id = 3, Name = "Rodriguez"}
         };
 
-        static List<Teen> teens = new List<Teen>
+        static readonly List<Teen> teens = new()
         {
             new Teen { Id = 1, FirstName = "Peter", LastName = "Parker", GradeLevel = 3, HouseChurch = houseChurches[1] },
             new Teen { Id = 2,  FirstName = "Damion", LastName = "Wayne", GradeLevel = 4, HouseChurch = houseChurches[0] },
         };
 
         [HttpGet("houseChurches")]
-        public async Task<IActionResult> GetHouseChurch()
+        public IActionResult GetHouseChurch()
         {
             return Ok(houseChurches);
         }
 
 
         [HttpGet]
-        public async Task<IActionResult> GetTeens()
+        public IActionResult GetTeens()
         {
             return Ok(teens);
         }
 
         [HttpGet("{id}")]
-        public async Task<IActionResult> GetSingleTeen(int id) 
+        public IActionResult GetSingleTeen(int id)
         {
             var teen = teens.FirstOrDefault(t => t.Id == id);
             if (teen == null)
@@ -49,7 +49,7 @@ namespace YouthAndFamilyDB.Server.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> CreateTeen(Teen teen)
+        public IActionResult CreateTeen(Teen teen)
         {
             teen.Id = teens.Max(t => t.Id + 1);
             teens.Add(teen);
@@ -58,7 +58,7 @@ namespace YouthAndFamilyDB.Server.Controllers
         }
 
         [HttpPut("{id}")]
-        public async Task<IActionResult> UpdateTeen(Teen teen, int id)
+        public IActionResult UpdateTeen(Teen teen, int id)
         {
             var dbTeen = teens.FirstOrDefault(t => t.Id == id);
             if (dbTeen == null)
@@ -71,7 +71,7 @@ namespace YouthAndFamilyDB.Server.Controllers
         }
 
         [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteTeen(int id)
+        public IActionResult DeleteTeen(int id)
         {
             var dbTeen = teens.FirstOrDefault(t => t.Id == id);
             if (dbTeen == null)
